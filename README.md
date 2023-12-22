@@ -21,7 +21,7 @@ After installation, you can use the command `widefield-plate-solve` from the ter
 ```
 widefield-plate-solve <fits_file_path> --use_api
 ```
-Replace `<fits_file_path>` with the path to your FITS file and `<sources_file>` with the path to your sources file. 
+Replace `<fits_file_path>` with the path to your FITS file. 
 Use the `--use_api` flag to use the Astrometry.net API for plate solving: Your environment variables will need to contain your
 API key.
 Not using `--use_api` will default to your local installation of Astrometry.net, looking for the `solve-field` command.
