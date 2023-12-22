@@ -56,7 +56,6 @@ def extract_stars(fits_file_path_or_2darray, debug_plot_path=None):
 
     # brightest first
     sources.sort('flux', reverse=True)
-    breakpoint()
 
     if debug_plot_path is not None:
         plot_stars(sources, image_sub, debug_plot_path)
