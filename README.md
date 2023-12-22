@@ -9,7 +9,7 @@ requested.
 
 To install the package, run:
 ```
-pip install .
+pip install widefield-plate-solver
 ```
 
 from the root directory of this package.
