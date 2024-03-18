@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 def plate_solve_locally(fits_file_path, sources,
                         ra_approx=None, dec_approx=None,
-                        scale_min=None, scale_max=None, use_n_brightest_only=None):
+                        scale_min=None, scale_max=None, use_n_brightest_only=None,
+                        odds_to_solve=1e6):
     """
     Calculate the WCS using a local installation of astrometry.net.
     The solve-field binary must be in the path, preferably in /usr/bin.
