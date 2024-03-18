@@ -11,7 +11,7 @@ from .extract_stars import extract_stars
 def plate_solve(fits_file_path, sources=None, use_existing_wcs_as_guess=True,
                 use_n_brightest_only=None, redo_if_done=False, use_api=True,
                 ra_approx=None, dec_approx=None, scale_min=None, scale_max=None,
-                logger=None, do_debug_plot=False):
+                logger=None, do_debug_plot=False, odds_to_solve=None):
     """
     Super function to decide between local and API plate solving.
 
@@ -28,6 +28,7 @@ def plate_solve(fits_file_path, sources=None, use_existing_wcs_as_guess=True,
     scale_max (float): largest pixel scale to consider in arcsec/pixel
     logger (logging.logger): if you feel fancy, provide a logger.
     do_debug_plot (bool): will dump an image of the extracted sources.
+    odds_to_solve: odds to declare solved. we can lower it for small fields when we specify a search radius.
 
     Returns:
     WCS header if successful, None otherwise.
@@ -71,8 +72,13 @@ def plate_solve(fits_file_path, sources=None, use_existing_wcs_as_guess=True,
                 scale_min, scale_max = 0.8 * scale, 1.2 * scale
 
     if use_api:
+        if odds_to_solve is not None:
+            logger.info('Parameter ignored: odds_to_solve not available with API solving')
         return plate_solve_with_API(fits_file_path, sources, ra_approx=ra_approx, dec_approx=dec_approx,
                                     scale_min=scale_min, scale_max=scale_max, use_n_brightest_only=use_n_brightest_only)
     else:
+        if odds_to_solve is None:
+            odds_to_solve = 1e6
         return plate_solve_locally(fits_file_path, sources, ra_approx=ra_approx, dec_approx=dec_approx,
-                                   scale_min=scale_min, scale_max=scale_max, use_n_brightest_only=use_n_brightest_only)
+                                   scale_min=scale_min, scale_max=scale_max, use_n_brightest_only=use_n_brightest_only,
+                                   odds_to_solve=odds_to_solve)

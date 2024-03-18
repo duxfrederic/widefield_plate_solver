@@ -32,6 +32,7 @@ def plate_solve_locally(fits_file_path, sources,
     scale_max (float): largest pixel scale to consider in arcsec/pixel
     use_n_brightest_only (int): number of sources to consider. If None using all.
     redo_if_done (bool): redo even if our solved keyword is already in the header?
+    odds_to_solve (float): declare solved beyond those odds
 
     Returns:
     WCS header if successful, None otherwise.
@@ -64,6 +65,8 @@ def plate_solve_locally(fits_file_path, sources,
             command += ['--ra', str(ra_approx), '--dec', str(dec_approx), '--radius', '1']
         # add the scale estimate as well
         command += ['--scale-low', str(scale_min), '--scale-high', str(scale_max), '--scale-units', 'arcsecperpix']
+        # add the odds
+        command += ['--odds-to-solve', str(odds_to_solve)]
 
         # we'll need this command to use the system python interpreter, not the one running this script.
         # (unless solve-field was installed within this environment ...but likely not the case)
