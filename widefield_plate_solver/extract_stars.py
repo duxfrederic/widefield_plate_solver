@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from scipy.ndimage import median_filter
 from astropy.io import fits
@@ -29,8 +30,23 @@ def extract_stars(fits_file_path_or_2darray, debug_plot_path=None):
     image_filtered = median_filter(image, size=2)
 
     image_sub = image_filtered - bkg
-    objects = sep.extract(image_sub, thresh=4, err=bkg.globalrms,
-                          minarea=10)
+    objects = None
+    thresh = 5
+    minarea = 10
+    extract_counter = 0
+    while objects is None and extract_counter < 5:
+        try:
+            objects = sep.extract(image_sub, thresh=thresh, err=bkg.globalrms,
+                                  minarea=minarea)
+        except Exception as e:
+            # most likely sep exception of overflow due to too many objects.
+            extract_counter += 1
+            print(f'Extract trial {extract_counter} failed with error: {e}. Attempting again with stricter limits.')
+            thresh += 1
+            minarea += 3
+    if objects is None:
+        print('Problem with source extraction: stopping')
+        sys.exit()
 
     sources = Table()
     for col in objects.dtype.names:
