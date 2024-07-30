@@ -1,6 +1,7 @@
 import subprocess
 import os
 from pathlib import Path
+import shutil
 from astropy.io import fits
 from astropy.wcs import WCS
 import logging
@@ -10,6 +11,31 @@ from astropy.table import Table
 from .exceptions import CouldNotSolveError
 
 logger = logging.getLogger(__name__)
+
+
+
+typical_locations = [
+    '/usr/bin/solve-field',
+    '/usr/local/bin/solve-field',
+    '/opt/solve-field/bin/solve-field'
+]
+
+def find_solve_field():
+    # first, check if solve-field is in the PATH
+    solve_field_path = shutil.which('solve-field')
+
+    if solve_field_path:
+        logger.info(f"'solve-field' found in PATH at: {solve_field_path}")
+        return solve_field_path
+
+    # if not found in PATH, check typical locations
+    for location in typical_locations:
+        if os.path.isfile(location) and os.access(location, os.X_OK):
+            logger.info(f"'solve-field' found at: {location}")
+            return location
+
+    logger.error("Error: 'solve-field' not found in PATH or typical locations.")
+    return None
 
 
 def plate_solve_locally(fits_file_path, sources,
@@ -57,6 +83,7 @@ def plate_solve_locally(fits_file_path, sources,
         hdu.writeto(xylist_path, overwrite=True)
 
         # build solve-field command
+        solve_field_path = find_solve_field()
         command = ['/usr/bin/solve-field', str(xylist_path), '--no-plots', '--x-column', 'X', '--y-column', 'Y',
                    '--sort-column', 'FLUX']  # by default solve-field sort by largest first, so ok to give flux this way
         # we also need the dimensions of the image:
