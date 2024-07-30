@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='widefield_plate_solver',
-    version='0.1.2',
+    version='0.1.3',
     author='Frédéric Dux',
     author_email='duxfrederic@gmail.com',
     packages=find_packages(),
