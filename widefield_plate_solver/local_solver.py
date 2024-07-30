@@ -84,7 +84,9 @@ def plate_solve_locally(fits_file_path, sources,
 
         # build solve-field command
         solve_field_path = find_solve_field()
-        command = ['/usr/bin/solve-field', str(xylist_path), '--no-plots', '--x-column', 'X', '--y-column', 'Y',
+        if solve_field_path is None:
+            return
+        command = [str(solve_field_path), str(xylist_path), '--no-plots', '--x-column', 'X', '--y-column', 'Y',
                    '--sort-column', 'FLUX']  # by default solve-field sort by largest first, so ok to give flux this way
         # we also need the dimensions of the image:
         header = fits.getheader(fits_file_path)
